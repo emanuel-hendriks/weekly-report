@@ -4,149 +4,149 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20WSL2-lightgrey)
 
-Un agente [Kiro](https://kiro.dev) che genera il tuo recap settimanale personale interrogando **Jira** (REST API), **GitHub** (Search API + GraphQL via httpx) e il **calendario Outlook** (MS Graph), in parallelo. Produce un report Markdown strutturato.
+A [Kiro](https://kiro.dev) agent that generates your personal weekly recap by querying **Jira** (REST API), **GitHub** (Search API + GraphQL via httpx), and **Outlook calendar** (MS Graph) in parallel. Produces a structured Markdown report.
 
-> È un tool individuale — genera il recap di una singola persona basandosi sulle sue credenziali e configurazione.
-
----
-
-## Indice
-
-1. [Prerequisiti](#prerequisiti)
-2. [Setup (prima volta)](#setup-prima-volta)
-3. [Uso](#uso)
-4. [Architettura](#architettura)
-6. [Struttura Progetto](#struttura-progetto)
-7. [Licenza](#licenza)
+> This is an individual tool — it generates a recap for a single person based on their credentials and configuration.
 
 ---
 
-## Prerequisiti
+## Table of Contents
 
-| Software | Scopo |
-|----------|-------|
-| Python 3.11+ | Package e script |
-| GitHub CLI (`gh`) | Token OAuth per le API GitHub |
-| Jira API Token | Fetch ticket via REST API |
-| git | Versionamento |
+1. [Prerequisites](#prerequisites)
+2. [Setup (First Time)](#setup-first-time)
+3. [Usage](#usage)
+4. [Architecture](#architecture)
+5. [Project Structure](#project-structure)
+6. [License](#license)
 
 ---
 
-## Setup (prima volta)
+## Prerequisites
+
+| Software | Purpose |
+|----------|---------|
+| Python 3.11+ | Package and scripts |
+| GitHub CLI (`gh`) | OAuth token for GitHub APIs |
+| Jira API Token | Fetch tickets via REST API |
+| git | Version control |
+
+---
+
+## Setup (First Time)
 
 ```
- 1. Installa prerequisiti
- 2. Autenticati con GitHub
- 3. Configura il token Jira
- 4. Autentica MS Graph (calendario)
- 5. Configura user-config.json
- 6. Esegui setup.sh (installa + valida + sentinel)
+ 1. Install prerequisites
+ 2. Authenticate with GitHub
+ 3. Configure Jira token
+ 4. Authenticate MS Graph (calendar)
+ 5. Configure user-config.json
+ 6. Run setup.sh (install + validate + sentinel)
 ```
 
-> Se chiedi un recap senza aver completato il setup, il comando `weekly-recap preflight` rileva cosa manca. L'agente, via steering ([`.kiro/steering/AGENT.md`](.kiro/steering/AGENT.md)), auto-fixa ciò che può (config, setup.sh) e ti indica i passi manuali (auth, token).
+> If you request a recap without completing setup, the `weekly-recap preflight` command detects what's missing. The agent, via steering ([`.kiro/steering/AGENT.md`](.kiro/steering/AGENT.md)), auto-fixes what it can (config, setup.sh) and tells you the manual steps (auth, tokens).
 
-### 1. Installa prerequisiti
+### 1. Install Prerequisites
 
 - **Python 3.11+**: [python.org/downloads](https://python.org/downloads/)
 - **GitHub CLI**: [cli.github.com](https://cli.github.com/)
 - **git**: [git-scm.com](https://git-scm.com)
 
-### 2. Autenticati con GitHub
+### 2. Authenticate with GitHub
 
 ```bash
 gh auth login
 ```
 
-I fetcher GitHub usano `httpx` per chiamare le API direttamente. `gh` serve solo come portachiavi: all'avvio il fetcher esegue `gh auth token` per leggere il token OAuth, poi fa tutte le richieste HTTP via httpx. Il token è salvato in `~/.config/gh/hosts.yml`.
+GitHub fetchers use `httpx` to call the APIs directly. `gh` only serves as a keychain: at startup, the fetcher runs `gh auth token` to read the OAuth token, then makes all HTTP requests via httpx. The token is saved in `~/.config/gh/hosts.yml`.
 
-### 3. Configura il token Jira
+### 3. Configure Jira Token
 
-Il fetcher Jira (`weekly_recap/fetchers/fetch_jira.py`) chiama la REST API di Jira Cloud via HTTP. Per autenticarsi serve un API token personale.
+The Jira fetcher (`weekly_recap/fetchers/fetch_jira.py`) calls the Jira Cloud REST API via HTTP. A personal API token is required for authentication.
 
-Genera il token da [id.atlassian.com/manage-profile/security/api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens) e salvalo:
+Generate a token at [id.atlassian.com/manage-profile/security/api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens) and save it:
 
 ```bash
 mkdir -p ~/.config/.jira
 echo 'export JIRA_API_TOKEN=<YOUR_TOKEN_HERE>' > ~/.config/.jira/.token
 ```
 
-Il file deve contenere una singola riga:
+The file must contain a single line:
 
 ```
 export JIRA_API_TOKEN=<YOUR_TOKEN_HERE>
 ```
 
-Poi aggiungi al tuo `~/.bashrc` o `~/.zshrc`:
+Then add to your `~/.bashrc` or `~/.zshrc`:
 
 ```bash
 source ~/.config/.jira/.token
 ```
 
-`fetch_jira.py` costruisce l'header `Authorization: Basic` con `base64(email:token)` (vedi `_prepare_auth()`).
+`fetch_jira.py` builds the `Authorization: Basic` header with `base64(email:token)` (see `_prepare_auth()`).
 
-### 4. Autentica MS Graph (calendario)
+### 4. Authenticate MS Graph (Calendar)
 
 ```bash
 python3 -m weekly_recap.auth.setup_graph_token
 ```
 
-Segui le istruzioni: apri [microsoft.com/devicelogin](https://microsoft.com/devicelogin), inserisci il codice mostrato, accedi con il tuo account aziendale.
+Follow the instructions: open [microsoft.com/devicelogin](https://microsoft.com/devicelogin), enter the displayed code, sign in with your work account.
 
-Il token viene salvato in `~/.ms-graph-tokens.json` e si auto-rinnova ad ogni esecuzione. Se scade (~90 giorni senza uso), ripeti questo step.
+The token is saved in `~/.ms-graph-tokens.json` and auto-refreshes on each run. If it expires (~90 days without use), repeat this step.
 
-### 5. Configura user-config.json
+### 5. Configure user-config.json
 
 ```bash
 cp user-config.json.template user-config.json
 ```
 
-Il template ha già i valori condivisi del team (tenant_id, client_id, workspace_id, orgs, projects). Devi solo cambiare i campi personali:
+The template has shared team values (tenant_id, client_id, workspace_id, orgs, projects). You only need to change personal fields:
 
 ```json
 {
-  "name": "Il Tuo Nome",
-  "jira_username": "tuo.nome@company.com",
-  "github_handle": "TuoGitHubUsername",
-  "calendar_email": "tuo.nome@company.com"
+  "name": "Your Name",
+  "jira_username": "your.name@company.com",
+  "github_handle": "YourGitHubUsername",
+  "calendar_email": "your.name@company.com"
 }
 ```
 
-| Campo | Descrizione |
+| Field | Description |
 |-------|-------------|
-| `name` | Il tuo nome (appare nel report) |
-| `jira_url` | URL dell'istanza Jira |
-| `jira_username` | La tua email Jira (usata anche per auth REST API) |
-| `github_handle` | Il tuo username GitHub |
-| `github_orgs` | Organizzazioni GitHub da interrogare |
-| `jira_projects` | Progetti Jira da interrogare |
-| `jira_assets_workspace_id` | ID workspace Jira Assets (pre-compilato) |
-| `calendar_email` | Email per il calendario MS Graph |
-| `ms_graph_tenant_id` | Azure AD tenant ID (pre-compilato) |
-| `ms_graph_client_id` | Azure AD app client ID (pre-compilato) |
-| `team_members` | (opzionale) Colleghi per raggruppare eventi calendario |
-| `language` | Lingua report: `"it"` o `"en"` |
+| `name` | Your name (appears in the report) |
+| `jira_url` | Jira instance URL |
+| `jira_username` | Your Jira email (also used for REST API auth) |
+| `github_handle` | Your GitHub username |
+| `github_orgs` | GitHub organizations to query |
+| `jira_projects` | Jira projects to query |
+| `jira_assets_workspace_id` | Jira Assets workspace ID (pre-filled) |
+| `calendar_email` | Email for MS Graph calendar |
+| `ms_graph_tenant_id` | Azure AD tenant ID (pre-filled) |
+| `ms_graph_client_id` | Azure AD app client ID (pre-filled) |
+| `team_members` | (optional) Colleagues to group calendar events |
+| `language` | Report language: `"it"` or `"en"` |
 
-### 6. Esegui setup
+### 6. Run Setup
 
 ```bash
 ./setup.sh
 ```
 
-Lo script:
-- Verifica che `gh` sia installato e autenticato
-- Valida `user-config.json` (no placeholder)
-- Installa il package in editable mode (`pip install -e .`)
-- Scrive `.setup-complete` (sentinel per il preflight)
+The script:
+- Verifies `gh` is installed and authenticated
+- Validates `user-config.json` (no placeholders)
+- Installs the package in editable mode (`pip install -e .`)
+- Writes `.setup-complete` (sentinel for preflight)
 
-Se `weekly-recap` non viene trovato dopo il setup:
+If `weekly-recap` is not found after setup:
 
 ```bash
-# ~/.zshrc o ~/.bashrc
+# ~/.zshrc or ~/.bashrc
 export PATH="$HOME/.local/bin:$PATH"
 source ~/.zshrc
 ```
 
-Oppure usa un virtual environment:
+Or use a virtual environment:
 
 ```bash
 python3 -m venv .venv
@@ -156,93 +156,93 @@ source .venv/bin/activate
 
 ---
 
-## Uso
+## Usage
 
-### Configurazione Kiro (`.kiro/`)
+### Kiro Configuration (`.kiro/`)
 
-La cartella `.kiro/` configura il comportamento dell'agente AI nell'IDE Kiro: steering files (regole always-on), hooks (automazioni), skills e un custom agent con permessi ristretti.
+The `.kiro/` folder configures the AI agent's behavior in the Kiro IDE: steering files (always-on rules), hooks (automations), skills, and a custom agent with restricted permissions.
 
-> 📖 Documentazione completa: [wiki — Kiro Configuration](https://github.com/your-org-1/kiro-personal-hendrikse/wiki/WRA-Kiro-Configuration)
+> 📖 Full documentation: [wiki — Kiro Configuration](https://github.com/your-org-1/kiro-personal-hendrikse/wiki/WRA-Kiro-Configuration)
 
-### One-click (Hook Kiro) — modo più veloce
+### One-Click (Kiro Hook) — Fastest Way
 
-Bottone **"Generate Weekly Recap"** nella sezione *Agent Hooks* dell'explorer Kiro. Un click: preflight + generazione. Nessun comando da digitare.
+**"Generate Weekly Recap"** button in the *Agent Hooks* section of the Kiro explorer. One click: preflight + generation. No commands to type.
 
-### Chat Kiro
+### Kiro Chat
 
-Dalla chat dell'IDE Kiro, con il workspace `weekly-report-agent` aperto:
+From the Kiro IDE chat, with the `weekly-report-agent` workspace open:
 
 ```
-genera il recap settimanale
-weekly recap dal 2026-05-05 al 2026-05-11
+generate weekly recap
+weekly recap from 2026-05-05 to 2026-05-11
 ```
 
 ### Custom Agent
 
-Il progetto include un **custom agent** dedicato in `.kiro/agents/weekly-report.json`. È un agente con permessi ristretti pensato per l'uso quotidiano, attivabile dalla Kiro CLI o dalla chat Kiro IDE quando il workspace `weekly-report-agent` è aperto:
+The project includes a dedicated **custom agent** in `.kiro/agents/weekly-report.json`. It's a restricted-permissions agent designed for daily use, activatable from the Kiro CLI or Kiro IDE chat when the `weekly-report-agent` workspace is open:
 
-- **Read-only** sul codice sorgente — può leggere ma non modificare `weekly_recap/`, `tests/`, `.kiro/`
-- **Write** solo su `user-config.json` e `reports/`
-- **Shell** limitata a comandi allowlistati: `weekly-recap preflight`, `weekly-recap generate`, `setup.sh`
-- **Nessun accesso** a git push, rm -rf, o comandi distruttivi
+- **Read-only** on source code — can read but not modify `weekly_recap/`, `tests/`, `.kiro/`
+- **Write** only on `user-config.json` and `reports/`
+- **Shell** limited to allowlisted commands: `weekly-recap preflight`, `weekly-recap generate`, `setup.sh`
+- **No access** to git push, rm -rf, or destructive commands
 
-**Attivazione:**
+**Activation:**
 
 ```bash
-# All'inizio di una sessione
+# At session start
 kiro-cli --agent weekly-report
 
-# Oppure durante una sessione attiva
+# Or during an active session
 kiro /agent swap
-# → seleziona "weekly-report" dalla lista
+# → select "weekly-report" from the list
 ```
 
-Una volta attivo, l'agente risponde ai prompt di generazione recap rispettando i permessi scoped.
+Once active, the agent responds to recap generation prompts while respecting scoped permissions.
 
 ### CLI
 
-Da un terminale qualsiasi (IDE integrato, iTerm, Terminal.app), posizionato nella root del progetto (`weekly-report-agent/`):
+From any terminal (integrated IDE, iTerm, Terminal.app), positioned in the project root (`weekly-report-agent/`):
 
 ```bash
-weekly-recap preflight                    # Verifica prerequisiti
-weekly-recap generate                     # Recap ultimi 7 giorni
-weekly-recap generate 2026-05-05 2026-05-11  # Periodo specifico
+weekly-recap preflight                    # Verify prerequisites
+weekly-recap generate                     # Recap last 7 days
+weekly-recap generate 2026-05-05 2026-05-11  # Specific period
 weekly-recap --help
 ```
 
-### Rotazione Credenziali
+### Credential Rotation
 
-Da un terminale posizionato nella root del progetto (per MS Graph) o da qualsiasi directory (per `gh` e Jira):
+From a terminal positioned in the project root (for MS Graph) or from any directory (for `gh` and Jira):
 
-| Credenziale | Comando | Quando |
-|-------------|---------|--------|
-| GitHub | `gh auth refresh` | Se revocato |
-| Jira | Rigenera token da [Atlassian](https://id.atlassian.com/manage-profile/security/api-tokens), aggiorna `~/.config/.jira/.token` | Se revocato |
-| MS Graph | `python3 -m weekly_recap.auth.setup_graph_token` | Dopo ~90 giorni di inattività |
+| Credential | Command | When |
+|------------|---------|------|
+| GitHub | `gh auth refresh` | If revoked |
+| Jira | Regenerate token at [Atlassian](https://id.atlassian.com/manage-profile/security/api-tokens), update `~/.config/.jira/.token` | If revoked |
+| MS Graph | `python3 -m weekly_recap.auth.setup_graph_token` | After ~90 days of inactivity |
 
 ---
 
-## Architettura
+## Architecture
 
-> Per il diagramma completo e le decisioni architetturali, vedi la [wiki — Architecture](https://github.com/your-org-1/kiro-personal-hendrikse/wiki/WRA-Architecture).
+> For the complete diagram and architectural decisions, see the [wiki — Architecture](https://github.com/your-org-1/kiro-personal-hendrikse/wiki/WRA-Architecture).
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  Utente → "weekly recap" / click hook / CLI                 │
+│  User → "weekly recap" / click hook / CLI                   │
 └──────────┬──────────────────────────────────────────────────┘
            │
            ▼
 ┌──────────────────────────────────────────────────────────────┐
-│  weekly-recap CLI (Python package installabile)              │
-│  1. preflight (validazione)                                  │
-│  2. generate (orchestratore parallelo)                       │
+│  weekly-recap CLI (installable Python package)               │
+│  1. preflight (validation)                                   │
+│  2. generate (parallel orchestrator)                         │
 └──────────┬───────────────────────────────────────────────────┘
-           │ subprocess.Popen (4 processi paralleli)
+           │ subprocess.Popen (4 parallel processes)
            ▼
 ┌──────────────────────────────────────────────────────────────┐
-│  Fetcher Paralleli                                           │
-│  • fetch_jira.py       → Jira REST API (6 query parallele)   │
-│  • fetch_github_prs.py → httpx async (6 query parallele)     │
+│  Parallel Fetchers                                           │
+│  • fetch_jira.py       → Jira REST API (6 parallel queries)  │
+│  • fetch_github_prs.py → httpx async (6 parallel queries)    │
 │  • fetch_github_commits.py → httpx (Search API + GraphQL)    │
 │  • fetch_calendar.py   → MS Graph API                        │
 └──────────┬───────────────────────────────────────────────────┘
@@ -256,9 +256,9 @@ Da un terminale posizionato nella root del progetto (per MS Graph) o da qualsias
 
 ---
 
-## Struttura Progetto
+## Project Structure
 
-> Per il dettaglio di ogni modulo (ruolo, input/output, dipendenze), vedi la [wiki — Modules](https://github.com/your-org-1/kiro-personal-hendrikse/wiki/WRA-Modules).
+> For details on each module (role, input/output, dependencies), see the [wiki — Modules](https://github.com/your-org-1/kiro-personal-hendrikse/wiki/WRA-Modules).
 
 ```
 .
@@ -339,6 +339,6 @@ Da un terminale posizionato nella root del progetto (per MS Graph) o da qualsias
 
 ---
 
-## Licenza
+## License
 
 [MIT](LICENSE) © 2026 your-org-1
