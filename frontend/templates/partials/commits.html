@@ -1,0 +1,46 @@
+<h3 class="text-accent-light text-sm font-bold uppercase tracking-wider mb-3">Commits ({{ commits | length }})</h3>
+{% if not commits %}
+<p class="text-text-muted italic">No commits for the selected filters.</p>
+{% else %}
+{% set repos = {} %}
+{% for commit in commits %}
+{% if commit.repo not in repos %}
+{% set _ = repos.update({commit.repo: []}) %}
+{% endif %}
+{% set _ = repos[commit.repo].append(commit) %}
+{% endfor %}
+
+{% for repo_name, repo_commits in repos.items() %}
+<details class="mb-3 bg-navy-800 rounded-lg border border-navy-700" open>
+    <summary class="px-4 py-2 cursor-pointer font-semibold text-sm hover:bg-navy-700/50 rounded-lg">
+        {{ repo_name }} ({{ repo_commits | length }})
+    </summary>
+    <div class="px-4 pb-3">
+        <table class="w-full text-sm mt-2">
+            <thead>
+                <tr class="text-text-muted text-xs uppercase border-b border-navy-700">
+                    <th class="text-left py-1 px-1">SHA</th>
+                    <th class="text-left py-1 px-1">Message</th>
+                    <th class="text-left py-1 px-1">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for commit in repo_commits %}
+                <tr class="border-b border-navy-700/30">
+                    <td class="py-1 px-1 font-mono text-xs">
+                        {% if commit.html_url %}
+                        <a href="{{ commit.html_url }}" target="_blank" class="text-accent-light hover:underline">{{ commit.short_sha or commit.sha[:7] }}</a>
+                        {% else %}
+                        {{ commit.short_sha or commit.sha[:7] }}
+                        {% endif %}
+                    </td>
+                    <td class="py-1 px-1 truncate max-w-xs">{{ commit.message }}</td>
+                    <td class="py-1 px-1 text-text-muted text-xs">{{ commit.date[:10] if commit.date else '—' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</details>
+{% endfor %}
+{% endif %}

@@ -1,0 +1,14 @@
+{
+  "name": "Your Name",
+  "jira_url": "https://prometeia.atlassian.net",
+  "jira_username": "your.email@prometeia.com",
+  "github_handle": "your-github-handle",
+  "github_orgs": ["prom-candp", "prometeia-wam"],
+  "jira_projects": ["AWS", "CPS"],
+  "jira_assets_workspace_id": "8ce4b273-d96f-4c70-8b75-752b50b42b06",
+  "calendar_email": "your.email@prometeia.com",
+  "ms_graph_tenant_id": "b0d66366-8b8a-4831-ae5f-9d15669342ce",
+  "ms_graph_client_id": "c2785dcf-0678-43ab-bc63-96ec5d0dc301",
+  "team_members": [],
+  "language": "it"
+}

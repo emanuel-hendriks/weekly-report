@@ -1,0 +1,41 @@
+
+digraph G {
+    concentrate = true;
+
+    rankdir = TB;
+    node [style=filled,fillcolor="#ffffff",fontcolor="#000000",fontname=Helvetica,fontsize=10];
+
+    certifi [fillcolor="#d92626",fontcolor="#ffffff",shape="folder"];
+    weekly_recap_auth_ensure_graph_token [fillcolor="#4cb3b3",label="weekly_recap\.\nauth\.\nensure_graph_token"];
+    weekly_recap_auth_setup_graph_token [fillcolor="#4cb3b3",label="weekly_recap\.\nauth\.\nsetup_graph_token"];
+    weekly_recap_cli [fillcolor="#46a4a4",label="weekly_recap\.\ncli"];
+    weekly_recap_fetchers_fetch_calendar [fillcolor="#4cb3b3",label="weekly_recap\.\nfetchers\.\nfetch_calendar"];
+    weekly_recap_fetchers_fetch_jira [fillcolor="#4cb3b3",label="weekly_recap\.\nfetchers\.\nfetch_jira"];
+    weekly_recap_generate_full_report [fillcolor="#378181",fontcolor="#ffffff",label="weekly_recap\.\ngenerate_full_report"];
+    weekly_recap_preflight [fillcolor="#47c2c2",label="weekly_recap\.\npreflight"];
+    weekly_recap_processing [fillcolor="#22e7e7",label="weekly_recap\.\nprocessing"];
+    weekly_recap_processing_due_date_formatter [fillcolor="#3ab0b0",label="weekly_recap\.\nprocessing\.\ndue_date_formatter"];
+    weekly_recap_processing_environment_extractor [fillcolor="#47c2c2",label="weekly_recap\.\nprocessing\.\nenvironment_extractor"];
+    weekly_recap_processing_models [fillcolor="#22e7e7",label="weekly_recap\.\nprocessing\.\nmodels"];
+    weekly_recap_processing_report_generator [fillcolor="#3ab0b0",label="weekly_recap\.\nprocessing\.\nreport_generator"];
+    weekly_recap_processing_summary_calculator [fillcolor="#3ab0b0",label="weekly_recap\.\nprocessing\.\nsummary_calculator"];
+    weekly_recap_processing_tenant_extractor [fillcolor="#47c2c2",label="weekly_recap\.\nprocessing\.\ntenant_extractor"];
+    weekly_recap_run_recap [fillcolor="#47c2c2",label="weekly_recap\.\nrun_recap"];
+    certifi -> weekly_recap_auth_ensure_graph_token [fillcolor="#d92626",minlen="3"];
+    certifi -> weekly_recap_auth_setup_graph_token [fillcolor="#d92626",minlen="3"];
+    certifi -> weekly_recap_fetchers_fetch_calendar [fillcolor="#d92626",minlen="3"];
+    certifi -> weekly_recap_fetchers_fetch_jira [fillcolor="#d92626",minlen="3"];
+    weekly_recap_preflight -> weekly_recap_cli [fillcolor="#47c2c2"];
+    weekly_recap_processing -> weekly_recap_generate_full_report [fillcolor="#22e7e7"];
+    weekly_recap_processing_due_date_formatter -> weekly_recap_generate_full_report [fillcolor="#3ab0b0",minlen="2"];
+    weekly_recap_processing_environment_extractor -> weekly_recap_generate_full_report [fillcolor="#47c2c2",minlen="2"];
+    weekly_recap_processing_models -> weekly_recap_generate_full_report [fillcolor="#22e7e7",minlen="2"];
+    weekly_recap_processing_models -> weekly_recap_processing_due_date_formatter [fillcolor="#22e7e7",weight="2"];
+    weekly_recap_processing_models -> weekly_recap_processing_report_generator [fillcolor="#22e7e7",weight="2"];
+    weekly_recap_processing_models -> weekly_recap_processing_summary_calculator [fillcolor="#22e7e7",weight="2"];
+    weekly_recap_processing_report_generator -> weekly_recap_generate_full_report [fillcolor="#3ab0b0",minlen="2"];
+    weekly_recap_processing_summary_calculator -> weekly_recap_generate_full_report [fillcolor="#3ab0b0",minlen="2"];
+    weekly_recap_processing_tenant_extractor -> weekly_recap_generate_full_report [fillcolor="#47c2c2",minlen="2"];
+    weekly_recap_run_recap -> weekly_recap_cli [fillcolor="#47c2c2"];
+}
+

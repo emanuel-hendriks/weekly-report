@@ -1,0 +1,71 @@
+{% set status_order = ['Completati', 'In Test / In Attesa', 'In Corso', 'Da Fare', 'Annullati', 'Attività Precedenti'] %}
+{% set status_colors = {
+    'Completati': 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
+    'In Test / In Attesa': 'bg-amber-500/10 border-amber-500/30 text-amber-400',
+    'In Corso': 'bg-blue-500/10 border-blue-500/30 text-blue-400',
+    'Da Fare': 'bg-gray-500/10 border-gray-500/30 text-gray-400',
+    'Annullati': 'bg-red-500/10 border-red-500/30 text-red-400',
+    'Attività Precedenti': 'bg-purple-500/10 border-purple-500/30 text-purple-400',
+} %}
+
+{% if not tickets %}
+<p class="text-gray-400 italic text-sm">No Jira tickets to display for the selected filters.</p>
+{% else %}
+
+{% for group_name in status_order %}
+{% set group_tickets = tickets | selectattr("status_group", "equalto", group_name) | list %}
+{% if group_tickets %}
+<div class="mb-6">
+    <h3 class="text-sm font-bold uppercase tracking-wider mb-3 flex items-center gap-2">
+        <span class="inline-block w-2 h-2 rounded-full {{ status_colors.get(group_name, 'bg-gray-500').split(' ')[0].replace('/10', '') }}"></span>
+        <span class="text-gray-200">{{ group_name }}</span>
+        <span class="text-gray-500 text-xs font-normal">({{ group_tickets|length }})</span>
+    </h3>
+
+    <div class="space-y-2">
+        {% for ticket in group_tickets %}
+        <div class="bg-navy-800 border border-navy-700 rounded-lg p-3 hover:border-navy-600 transition-colors">
+            <div class="flex items-start justify-between gap-3">
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        {% for key_entry in ticket.keys %}
+                        <a href="{{ key_entry.url }}" target="_blank"
+                            class="text-green-accent hover:text-green-primary text-sm font-mono font-medium transition-colors">
+                            {{ key_entry.key }}
+                        </a>
+                        {% endfor %}
+                        {% if ticket.tenant %}
+                        <span class="text-xs px-1.5 py-0.5 rounded bg-navy-700 text-gray-400">{{ ticket.tenant }}</span>
+                        {% endif %}
+                        {% if ticket.environment %}
+                        <span class="text-xs px-1.5 py-0.5 rounded bg-navy-700 text-blue-300">{{ ticket.environment }}</span>
+                        {% endif %}
+                    </div>
+                    <p class="text-gray-300 text-sm mt-1 truncate">{{ ticket.summary }}</p>
+                </div>
+                <div class="flex-shrink-0 text-right">
+                    {% if ticket.due_date %}
+                    <span class="text-xs {% if ticket.due_date <= (now|default('2026-12-31'))[:10] %}text-amber-400 font-bold{% else %}text-gray-500{% endif %}">
+                        {{ ticket.due_date }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+            {% if ticket.commits %}
+            <div class="mt-2 flex gap-2 flex-wrap">
+                {% for commit in ticket.commits %}
+                <a href="{{ commit.html_url }}" target="_blank"
+                    class="text-xs font-mono text-gray-400 hover:text-green-accent bg-navy-900 px-1.5 py-0.5 rounded transition-colors">
+                    {{ commit.short_sha }}
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+
+{% endif %}

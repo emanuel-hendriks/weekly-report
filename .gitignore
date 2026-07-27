@@ -1,0 +1,77 @@
+# OS files
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Hypothesis test cache
+.hypothesis/
+
+# Pytest cache
+.pytest_cache/
+
+# Weekly recap reports — generated locally, not tracked in git
+reports/*.md
+
+# Script output cache — temporary files from fetch_calendar.py and fetch_git_commits.py
+reports/.cache/*.json
+
+# Spurious cache dirs (if scripts run from wrong CWD)
+scripts/reports/
+
+# Package metadata (created by pip install -e .)
+*.egg-info/
+
+# Specs are stored at workspace level (~/.kiro/specs), not in the repo
+.kiro/specs/*
+
+#docs 
+docs
+
+# Catch any stray reports written to root by mistake
+weekly-recap-*.md
+
+# Environment file with secrets — only the template is tracked
+.env
+
+# Jira API token file (used by acli in token mode)
+.jira-token
+
+# Setup sentinel file (created by setup.sh on successful completion)
+.setup-complete
+
+# Dashboard PID file
+.dashboard.pid
+
+# Frontend build artifacts (regenerated via tailwindcss binary)
+frontend/static/output.css
+frontend/tailwindcss
+
+# MCP config contains credentials — only the template is tracked
+.kiro/settings/mcp.json
+.kiro/settings/mcp-wrapped.json
+
+# User config contains personal identifiers — only the template is tracked
+user-config.json
+
+# Secrets loader contains personal identifiers
+.kiro/scripts/*
+
+repo-analysis
+
+# Draw.io temp/backup files (created by Electron app)
+graphs/.$*.bkp
+weekly_recap/graphs/.$*.dtmp
+
+# Generated graph outputs and old drawio (only architecturev2.drawio and dependency-graph.json are tracked)
+graphs/*.png
+graphs/*.svg
+graphs/*.dot
+graphs/architecture.drawio
+graphs/dependency-graph.json
+graphs/github-auth-flow.json
+
+
+
+reports/ami-dev-email-undelivered-lambda

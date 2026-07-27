@@ -1,0 +1,25 @@
+[project]
+name = "weekly-recap"
+version = "1.0.0"
+description = "Personal weekly activity recap generator"
+requires-python = ">=3.11"
+dependencies = [
+    "certifi",
+    "httpx",
+    "requests",
+    "fastapi",
+    "uvicorn[standard]",
+    "jinja2",
+    "pytest",
+    "hypothesis",
+]
+
+[project.scripts]
+weekly-recap = "weekly_recap.cli:main"
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["weekly_recap*"]

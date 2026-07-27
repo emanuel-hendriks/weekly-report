@@ -1,0 +1,15 @@
+{
+  "name": "Generate Weekly Recap",
+  "version": "1.0.0",
+  "description": "One-click button to generate the weekly recap for the last 7 days.",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Generate the weekly recap for the default period (last 7 days). Run `weekly-recap generate`. Follow all steering rules."
+  },
+  "enabled": true,
+  "workspaceFolderName": "weekly-report-agent",
+  "shortName": "generate-weekly-recap"
+}

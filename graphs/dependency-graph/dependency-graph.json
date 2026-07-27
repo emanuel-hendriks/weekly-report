@@ -1,0 +1,284 @@
+{
+    "__main__": {
+        "bacon": 0,
+        "imports": [
+            "weekly_recap",
+            "weekly_recap.auth",
+            "weekly_recap.auth.ensure_graph_token",
+            "weekly_recap.auth.setup_graph_token",
+            "weekly_recap.cli",
+            "weekly_recap.fetchers",
+            "weekly_recap.fetchers.fetch_calendar",
+            "weekly_recap.fetchers.fetch_github_commits",
+            "weekly_recap.fetchers.fetch_github_prs",
+            "weekly_recap.fetchers.fetch_jira",
+            "weekly_recap.generate_full_report",
+            "weekly_recap.preflight",
+            "weekly_recap.processing",
+            "weekly_recap.processing.due_date_formatter",
+            "weekly_recap.processing.environment_extractor",
+            "weekly_recap.processing.models",
+            "weekly_recap.processing.report_generator",
+            "weekly_recap.processing.summary_calculator",
+            "weekly_recap.processing.tenant_extractor",
+            "weekly_recap.run_recap"
+        ],
+        "name": "__main__",
+        "path": null
+    },
+    "certifi": {
+        "bacon": 2,
+        "imported_by": [
+            "weekly_recap.auth.ensure_graph_token",
+            "weekly_recap.auth.setup_graph_token",
+            "weekly_recap.fetchers.fetch_calendar",
+            "weekly_recap.fetchers.fetch_jira"
+        ],
+        "imports": [
+            "certifi.core"
+        ],
+        "name": "certifi",
+        "path": "/Users/hendrikse/Library/Python/3.13/lib/python/site-packages/certifi/__init__.py"
+    },
+    "certifi.core": {
+        "bacon": 3,
+        "imported_by": [
+            "certifi"
+        ],
+        "name": "certifi.core",
+        "path": null
+    },
+    "weekly_recap": {
+        "bacon": 1,
+        "imported_by": [
+            "__main__",
+            "weekly_recap.cli",
+            "weekly_recap.generate_full_report",
+            "weekly_recap.processing.due_date_formatter",
+            "weekly_recap.processing.report_generator",
+            "weekly_recap.processing.summary_calculator"
+        ],
+        "name": "weekly_recap",
+        "path": "/Users/hendrikse/githubrepos/kiro-repos/kiro-personal-hendrikse/weekly-report-agent/weekly_recap/__init__.py"
+    },
+    "weekly_recap.auth": {
+        "bacon": 1,
+        "imported_by": [
+            "__main__"
+        ],
+        "name": "weekly_recap.auth",
+        "path": "/Users/hendrikse/githubrepos/kiro-repos/kiro-personal-hendrikse/weekly-report-agent/weekly_recap/auth/__init__.py"
+    },
+    "weekly_recap.auth.ensure_graph_token": {
+        "bacon": 1,
+        "imported_by": [
+            "__main__"
+        ],
+        "imports": [
+            "certifi"
+        ],
+        "name": "weekly_recap.auth.ensure_graph_token",
+        "path": "/Users/hendrikse/githubrepos/kiro-repos/kiro-personal-hendrikse/weekly-report-agent/weekly_recap/auth/ensure_graph_token.py"
+    },
+    "weekly_recap.auth.setup_graph_token": {
+        "bacon": 1,
+        "imported_by": [
+            "__main__"
+        ],
+        "imports": [
+            "certifi"
+        ],
+        "name": "weekly_recap.auth.setup_graph_token",
+        "path": "/Users/hendrikse/githubrepos/kiro-repos/kiro-personal-hendrikse/weekly-report-agent/weekly_recap/auth/setup_graph_token.py"
+    },
+    "weekly_recap.cli": {
+        "bacon": 1,
+        "imported_by": [
+            "__main__"
+        ],
+        "imports": [
+            "weekly_recap",
+            "weekly_recap.preflight",
+            "weekly_recap.run_recap"
+        ],
+        "name": "weekly_recap.cli",
+        "path": "/Users/hendrikse/githubrepos/kiro-repos/kiro-personal-hendrikse/weekly-report-agent/weekly_recap/cli.py"
+    },
+    "weekly_recap.fetchers": {
+        "bacon": 1,
+        "imported_by": [
+            "__main__"
+        ],
+        "name": "weekly_recap.fetchers",
+        "path": "/Users/hendrikse/githubrepos/kiro-repos/kiro-personal-hendrikse/weekly-report-agent/weekly_recap/fetchers/__init__.py"
+    },
+    "weekly_recap.fetchers.fetch_calendar": {
+        "bacon": 1,
+        "imported_by": [
+            "__main__"
+        ],
+        "imports": [
+            "certifi"
+        ],
+        "name": "weekly_recap.fetchers.fetch_calendar",
+        "path": "/Users/hendrikse/githubrepos/kiro-repos/kiro-personal-hendrikse/weekly-report-agent/weekly_recap/fetchers/fetch_calendar.py"
+    },
+    "weekly_recap.fetchers.fetch_github_commits": {
+        "bacon": 1,
+        "imported_by": [
+            "__main__"
+        ],
+        "imports": [
+            "httpx"
+        ],
+        "name": "weekly_recap.fetchers.fetch_github_commits",
+        "path": "/Users/hendrikse/githubrepos/kiro-repos/kiro-personal-hendrikse/weekly-report-agent/weekly_recap/fetchers/fetch_github_commits.py"
+    },
+    "weekly_recap.fetchers.fetch_github_prs": {
+        "bacon": 1,
+        "imported_by": [
+            "__main__"
+        ],
+        "imports": [
+            "httpx"
+        ],
+        "name": "weekly_recap.fetchers.fetch_github_prs",
+        "path": "/Users/hendrikse/githubrepos/kiro-repos/kiro-personal-hendrikse/weekly-report-agent/weekly_recap/fetchers/fetch_github_prs.py"
+    },
+    "weekly_recap.fetchers.fetch_jira": {
+        "bacon": 1,
+        "imported_by": [
+            "__main__"
+        ],
+        "imports": [
+            "certifi"
+        ],
+        "name": "weekly_recap.fetchers.fetch_jira",
+        "path": "/Users/hendrikse/githubrepos/kiro-repos/kiro-personal-hendrikse/weekly-report-agent/weekly_recap/fetchers/fetch_jira.py"
+    },
+    "weekly_recap.generate_full_report": {
+        "bacon": 1,
+        "imported_by": [
+            "__main__"
+        ],
+        "imports": [
+            "weekly_recap",
+            "weekly_recap.processing",
+            "weekly_recap.processing.due_date_formatter",
+            "weekly_recap.processing.environment_extractor",
+            "weekly_recap.processing.models",
+            "weekly_recap.processing.report_generator",
+            "weekly_recap.processing.summary_calculator",
+            "weekly_recap.processing.tenant_extractor"
+        ],
+        "name": "weekly_recap.generate_full_report",
+        "path": "/Users/hendrikse/githubrepos/kiro-repos/kiro-personal-hendrikse/weekly-report-agent/weekly_recap/generate_full_report.py"
+    },
+    "weekly_recap.preflight": {
+        "bacon": 1,
+        "imported_by": [
+            "__main__",
+            "weekly_recap.cli",
+            "weekly_recap.run_recap"
+        ],
+        "name": "weekly_recap.preflight",
+        "path": "/Users/hendrikse/githubrepos/kiro-repos/kiro-personal-hendrikse/weekly-report-agent/weekly_recap/preflight.py"
+    },
+    "weekly_recap.processing": {
+        "bacon": 1,
+        "imported_by": [
+            "__main__",
+            "weekly_recap.generate_full_report",
+            "weekly_recap.processing.due_date_formatter",
+            "weekly_recap.processing.report_generator",
+            "weekly_recap.processing.summary_calculator"
+        ],
+        "name": "weekly_recap.processing",
+        "path": "/Users/hendrikse/githubrepos/kiro-repos/kiro-personal-hendrikse/weekly-report-agent/weekly_recap/processing/__init__.py"
+    },
+    "weekly_recap.processing.due_date_formatter": {
+        "bacon": 1,
+        "imported_by": [
+            "__main__",
+            "weekly_recap.generate_full_report"
+        ],
+        "imports": [
+            "weekly_recap",
+            "weekly_recap.processing",
+            "weekly_recap.processing.models"
+        ],
+        "name": "weekly_recap.processing.due_date_formatter",
+        "path": "/Users/hendrikse/githubrepos/kiro-repos/kiro-personal-hendrikse/weekly-report-agent/weekly_recap/processing/due_date_formatter.py"
+    },
+    "weekly_recap.processing.environment_extractor": {
+        "bacon": 1,
+        "imported_by": [
+            "__main__",
+            "weekly_recap.generate_full_report"
+        ],
+        "name": "weekly_recap.processing.environment_extractor",
+        "path": "/Users/hendrikse/githubrepos/kiro-repos/kiro-personal-hendrikse/weekly-report-agent/weekly_recap/processing/environment_extractor.py"
+    },
+    "weekly_recap.processing.models": {
+        "bacon": 1,
+        "imported_by": [
+            "__main__",
+            "weekly_recap.generate_full_report",
+            "weekly_recap.processing.due_date_formatter",
+            "weekly_recap.processing.report_generator",
+            "weekly_recap.processing.summary_calculator"
+        ],
+        "name": "weekly_recap.processing.models",
+        "path": "/Users/hendrikse/githubrepos/kiro-repos/kiro-personal-hendrikse/weekly-report-agent/weekly_recap/processing/models.py"
+    },
+    "weekly_recap.processing.report_generator": {
+        "bacon": 1,
+        "imported_by": [
+            "__main__",
+            "weekly_recap.generate_full_report"
+        ],
+        "imports": [
+            "weekly_recap",
+            "weekly_recap.processing",
+            "weekly_recap.processing.models"
+        ],
+        "name": "weekly_recap.processing.report_generator",
+        "path": "/Users/hendrikse/githubrepos/kiro-repos/kiro-personal-hendrikse/weekly-report-agent/weekly_recap/processing/report_generator.py"
+    },
+    "weekly_recap.processing.summary_calculator": {
+        "bacon": 1,
+        "imported_by": [
+            "__main__",
+            "weekly_recap.generate_full_report"
+        ],
+        "imports": [
+            "weekly_recap",
+            "weekly_recap.processing",
+            "weekly_recap.processing.models"
+        ],
+        "name": "weekly_recap.processing.summary_calculator",
+        "path": "/Users/hendrikse/githubrepos/kiro-repos/kiro-personal-hendrikse/weekly-report-agent/weekly_recap/processing/summary_calculator.py"
+    },
+    "weekly_recap.processing.tenant_extractor": {
+        "bacon": 1,
+        "imported_by": [
+            "__main__",
+            "weekly_recap.generate_full_report"
+        ],
+        "name": "weekly_recap.processing.tenant_extractor",
+        "path": "/Users/hendrikse/githubrepos/kiro-repos/kiro-personal-hendrikse/weekly-report-agent/weekly_recap/processing/tenant_extractor.py"
+    },
+    "weekly_recap.run_recap": {
+        "bacon": 1,
+        "imported_by": [
+            "__main__",
+            "weekly_recap.cli"
+        ],
+        "imports": [
+            "weekly_recap.preflight",
+            "weekly_recap.generate_full_report"
+        ],
+        "name": "weekly_recap.run_recap",
+        "path": "/Users/hendrikse/githubrepos/kiro-repos/kiro-personal-hendrikse/weekly-report-agent/weekly_recap/run_recap.py"
+    }
+}

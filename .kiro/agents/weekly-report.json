@@ -1,0 +1,52 @@
+{
+  "name": "weekly-report",
+  "description": "Generates personal weekly activity recaps from Jira, GitHub, and Outlook calendar. Produces Markdown reports.",
+  "prompt": "file://./weekly-report-prompt.md",
+  "tools": ["read", "write", "shell"],
+  "allowedTools": [],
+  "toolsSettings": {
+    "read": {
+      "allowedPaths": [
+        "./weekly_recap/**",
+        "./reports/**",
+        "./tests/**",
+        "./pyproject.toml",
+        "./user-config.json",
+        "./user-config.json.template",
+        "./setup.sh",
+        "./README.md",
+        "./.kiro/**"
+      ]
+    },
+    "write": {
+      "allowedPaths": [
+        "./user-config.json",
+        "./reports/**"
+      ],
+      "deniedPaths": [
+        "./weekly_recap/**",
+        "./tests/**",
+        "./.kiro/**"
+      ]
+    },
+    "shell": {
+      "allowedCommands": [
+        "\\Aweekly-recap preflight\\z",
+        "\\Aweekly-recap generate.*\\z",
+        "\\Aweekly-recap --help\\z",
+        "\\Apython3 -m weekly_recap\\.auth\\.setup_graph_token\\z",
+        "\\Acp user-config\\.json\\.template user-config\\.json\\z",
+        "\\A\\./setup\\.sh\\z",
+        "\\Agh auth status\\z",
+        "\\Apip install -e \\.\\z"
+      ],
+      "deniedCommands": [
+        "\\Arm -rf.*\\z",
+        "\\Agit push.*\\z",
+        "\\Agit reset.*\\z"
+      ]
+    }
+  },
+  "includeMcpJson": false,
+  "model": "claude-sonnet-4"
+}

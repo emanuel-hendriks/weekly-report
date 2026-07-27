@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Recap — {{ user_name }}</title>
+    <link rel="stylesheet" href="/static/output.css">
+    <script src="/static/htmx.min.js"></script>
+</head>
+<body class="bg-navy-900 text-text-primary min-h-screen font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-72 bg-navy-800 border-r border-navy-700 overflow-y-auto flex-shrink-0 p-4">
+            {% block sidebar %}{% endblock %}
+        </aside>
+
+        <!-- Main content -->
+        <main class="flex-1 overflow-y-auto p-6">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

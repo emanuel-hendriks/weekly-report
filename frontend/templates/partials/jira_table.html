@@ -1,0 +1,39 @@
+{% if not tickets %}
+<p class="text-text-muted italic">No Jira tickets for the selected filters.</p>
+{% else %}
+{% for group_name, group_tickets in ticket_groups.items() %}
+<h3 class="text-accent-light text-sm font-bold uppercase tracking-wider mt-6 mb-2 first:mt-0">
+    {{ group_name }} ({{ group_tickets | length }})
+</h3>
+<div class="overflow-x-auto">
+<table class="w-full text-sm">
+    <thead>
+        <tr class="border-b border-navy-700 text-text-muted text-xs uppercase">
+            <th class="text-left py-2 px-2">Ticket</th>
+            <th class="text-left py-2 px-2">Tenant</th>
+            <th class="text-left py-2 px-2">Env</th>
+            <th class="text-left py-2 px-2">Description</th>
+            <th class="text-left py-2 px-2">Due</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ticket in group_tickets %}
+        <tr class="border-b border-navy-700/50 hover:bg-navy-700/30">
+            <td class="py-2 px-2 font-mono text-xs">
+                {% for key_entry in ticket.get('keys', []) %}
+                <a href="{{ key_entry.url }}" target="_blank" class="text-accent-light hover:underline">{{ key_entry.key }}</a>{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </td>
+            <td class="py-2 px-2 text-text-muted">{{ ticket.tenant or '—' }}</td>
+            <td class="py-2 px-2 text-text-muted">{{ ticket.environment or '—' }}</td>
+            <td class="py-2 px-2">{{ ticket.summary or ticket.description or '' }}</td>
+            <td class="py-2 px-2 {% if ticket.due_soon %}text-amber-400 font-semibold{% else %}text-text-muted{% endif %}">
+                {{ ticket.due_date or '—' }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endfor %}
+{% endif %}

@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block sidebar %}
+<div class="mb-6">
+    <h1 class="text-accent-light text-lg font-bold tracking-wide">Weekly Recap</h1>
+    <p class="text-text-muted text-sm mt-1">{{ user_name }}</p>
+</div>
+
+<!-- Date range -->
+<div class="mb-4">
+    <label class="text-accent-light text-xs font-semibold uppercase tracking-wider">Period</label>
+    <div class="flex gap-2 mt-2">
+        <input type="date" name="start_date" value="{{ start_date }}"
+               class="bg-navy-900 border border-navy-700 rounded px-2 py-1 text-sm w-full text-text-primary"
+               hx-get="/api/filter" hx-include="[name='start_date'],[name='end_date'],[name='status'],[name='project'],[name='org'],[name='repo']"
+               hx-target="#main-content" hx-trigger="change">
+        <input type="date" name="end_date" value="{{ end_date }}"
+               class="bg-navy-900 border border-navy-700 rounded px-2 py-1 text-sm w-full text-text-primary"
+               hx-get="/api/filter" hx-include="[name='start_date'],[name='end_date'],[name='status'],[name='project'],[name='org'],[name='repo']"
+               hx-target="#main-content" hx-trigger="change">
+    </div>
+</div>
+
+<hr class="border-navy-700 my-4">
+
+<!-- Jira Filters -->
+<details class="mb-3" open>
+    <summary class="text-accent-light text-xs font-semibold uppercase tracking-wider cursor-pointer">Jira</summary>
+    <div class="mt-2 space-y-1">
+        {% for status in all_statuses %}
+        <label class="flex items-center gap-2 text-sm text-text-primary cursor-pointer">
+            <input type="checkbox" name="status" value="{{ status }}" checked
+                   class="accent-accent rounded"
+                   hx-get="/api/filter" hx-include="[name='start_date'],[name='end_date'],[name='status'],[name='project'],[name='org'],[name='repo']"
+                   hx-target="#main-content" hx-trigger="change">
+            {{ status }}
+        </label>
+        {% endfor %}
+    </div>
+    <div class="mt-3 space-y-1">
+        <p class="text-text-muted text-xs uppercase">Projects</p>
+        {% for proj in all_projects %}
+        <label class="flex items-center gap-2 text-sm text-text-primary cursor-pointer">
+            <input type="checkbox" name="project" value="{{ proj }}" checked
+                   class="accent-accent rounded"
+                   hx-get="/api/filter" hx-include="[name='start_date'],[name='end_date'],[name='status'],[name='project'],[name='org'],[name='repo']"
+                   hx-target="#main-content" hx-trigger="change">
+            {{ proj }}
+        </label>
+        {% endfor %}
+    </div>
+</details>
+
+<hr class="border-navy-700 my-4">
+
+<!-- GitHub Filters -->
+<details class="mb-3" open>
+    <summary class="text-accent-light text-xs font-semibold uppercase tracking-wider cursor-pointer">GitHub</summary>
+    <div class="mt-2 space-y-1">
+        <p class="text-text-muted text-xs uppercase">Organizations</p>
+        {% for org in all_orgs %}
+        <label class="flex items-center gap-2 text-sm text-text-primary cursor-pointer">
+            <input type="checkbox" name="org" value="{{ org }}" checked
+                   class="accent-accent rounded"
+                   hx-get="/api/filter" hx-include="[name='start_date'],[name='end_date'],[name='status'],[name='project'],[name='org'],[name='repo']"
+                   hx-target="#main-content" hx-trigger="change">
+            {{ org }}
+        </label>
+        {% endfor %}
+    </div>
+    <div class="mt-3 space-y-1">
+        <p class="text-text-muted text-xs uppercase">Repositories</p>
+        {% for repo in all_repos %}
+        <label class="flex items-center gap-2 text-sm text-text-primary cursor-pointer">
+            <input type="checkbox" name="repo" value="{{ repo }}" checked
+                   class="accent-accent rounded"
+                   hx-get="/api/filter" hx-include="[name='start_date'],[name='end_date'],[name='status'],[name='project'],[name='org'],[name='repo']"
+                   hx-target="#main-content" hx-trigger="change">
+            {{ repo }}
+        </label>
+        {% endfor %}
+    </div>
+</details>
+
+<!-- Generate button -->
+<hr class="border-navy-700 my-4">
+<button hx-post="/api/generate" hx-target="#main-content" hx-indicator="#gen-spinner"
+        class="w-full bg-accent hover:bg-accent/80 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors">
+    Generate Recap
+</button>
+<span id="gen-spinner" class="htmx-indicator text-accent-light text-sm mt-2 block text-center">Generating...</span>
+{% endblock %}
+
+{% block content %}
+<div id="main-content">
+    {% include "partials/metrics.html" %}
+
+    <!-- Tabs -->
+    <div class="mt-6" x-data="{ tab: 'jira' }">
+        <nav class="flex gap-1 border-b border-navy-700 mb-4">
+            <button onclick="switchTab('jira')" id="tab-btn-jira"
+                    class="tab-btn px-4 py-2 text-sm font-semibold uppercase tracking-wide rounded-t border-b-2 border-accent text-accent-light">
+                Jira ({{ tickets | length }})
+            </button>
+            <button onclick="switchTab('calendar')" id="tab-btn-calendar"
+                    class="tab-btn px-4 py-2 text-sm font-semibold uppercase tracking-wide rounded-t border-b-2 border-transparent text-text-muted hover:text-text-primary">
+                Calendar ({{ events | length }})
+            </button>
+            <button onclick="switchTab('git')" id="tab-btn-git"
+                    class="tab-btn px-4 py-2 text-sm font-semibold uppercase tracking-wide rounded-t border-b-2 border-transparent text-text-muted hover:text-text-primary">
+                Git ({{ commits | length + prs | length }})
+            </button>
+        </nav>
+
+        <div id="tab-jira" class="tab-panel">
+            {% include "partials/jira_table.html" %}
+        </div>
+        <div id="tab-calendar" class="tab-panel hidden">
+            {% include "partials/calendar.html" %}
+        </div>
+        <div id="tab-git" class="tab-panel hidden">
+            {% include "partials/commits.html" %}
+            {% include "partials/prs.html" %}
+        </div>
+    </div>
+</div>
+
+<script>
+function switchTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(el => {
+        el.classList.remove('border-accent', 'text-accent-light');
+        el.classList.add('border-transparent', 'text-text-muted');
+    });
+    document.getElementById('tab-' + name).classList.remove('hidden');
+    const btn = document.getElementById('tab-btn-' + name);
+    btn.classList.add('border-accent', 'text-accent-light');
+    btn.classList.remove('border-transparent', 'text-text-muted');
+}
+</script>
+{% endblock %}

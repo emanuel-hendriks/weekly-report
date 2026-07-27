@@ -1,0 +1,45 @@
+{% if not events %}
+<p class="text-text-muted italic">No calendar events for the selected filters.</p>
+{% else %}
+<div class="grid grid-cols-2 gap-4 mb-4">
+    <div class="bg-navy-800 rounded-lg p-3 border border-navy-700">
+        <p class="text-accent-light text-xs font-semibold uppercase">Total Meetings</p>
+        <p class="text-2xl font-bold">{{ events | length }}</p>
+    </div>
+    <div class="bg-navy-800 rounded-lg p-3 border border-navy-700">
+        <p class="text-accent-light text-xs font-semibold uppercase">Total Hours</p>
+        <p class="text-2xl font-bold">{{ meeting_hours }}</p>
+    </div>
+</div>
+
+{% set days = {} %}
+{% for event in events %}
+{% set day = event.start[:10] if event.start else 'Unknown' %}
+{% if day not in days %}
+{% set _ = days.update({day: []}) %}
+{% endif %}
+{% set _ = days[day].append(event) %}
+{% endfor %}
+
+{% for day, day_events in days.items() %}
+<div class="mb-4">
+    <h4 class="text-text-primary font-semibold text-sm mb-2 border-b border-navy-700 pb-1">{{ day }}</h4>
+    {% for event in day_events %}
+    <details class="mb-1 bg-navy-800 rounded border border-navy-700/50">
+        <summary class="px-3 py-2 cursor-pointer text-sm hover:bg-navy-700/30 rounded">
+            <span class="text-text-muted text-xs font-mono">{{ event.start[11:16] if event.start|length > 10 else '' }} – {{ event.end[11:16] if event.end|length > 10 else '' }}</span>
+            <span class="ml-2">{{ event.subject or 'Untitled' }}</span>
+        </summary>
+        <div class="px-3 pb-2 text-xs text-text-muted">
+            {% if event.attendee_emails %}
+            <p class="font-semibold text-accent-light mt-1">Attendees:</p>
+            {% for email in event.attendee_emails %}
+            <p>{{ email }}</p>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </details>
+    {% endfor %}
+</div>
+{% endfor %}
+{% endif %}

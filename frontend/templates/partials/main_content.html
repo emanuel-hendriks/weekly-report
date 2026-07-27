@@ -1,0 +1,44 @@
+{% include "partials/metrics.html" %}
+
+<!-- Tabs -->
+<div class="mt-6">
+    <nav class="flex gap-1 border-b border-navy-700 mb-4">
+        <button onclick="switchTab('jira')" id="tab-btn-jira"
+                class="tab-btn px-4 py-2 text-sm font-semibold uppercase tracking-wide rounded-t border-b-2 border-accent text-accent-light">
+            Jira ({{ tickets | length }})
+        </button>
+        <button onclick="switchTab('calendar')" id="tab-btn-calendar"
+                class="tab-btn px-4 py-2 text-sm font-semibold uppercase tracking-wide rounded-t border-b-2 border-transparent text-text-muted hover:text-text-primary">
+            Calendar ({{ events | length }})
+        </button>
+        <button onclick="switchTab('git')" id="tab-btn-git"
+                class="tab-btn px-4 py-2 text-sm font-semibold uppercase tracking-wide rounded-t border-b-2 border-transparent text-text-muted hover:text-text-primary">
+            Git ({{ commits | length + prs | length }})
+        </button>
+    </nav>
+
+    <div id="tab-jira" class="tab-panel">
+        {% include "partials/jira_table.html" %}
+    </div>
+    <div id="tab-calendar" class="tab-panel hidden">
+        {% include "partials/calendar.html" %}
+    </div>
+    <div id="tab-git" class="tab-panel hidden">
+        {% include "partials/commits.html" %}
+        {% include "partials/prs.html" %}
+    </div>
+</div>
+
+<script>
+function switchTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(el => {
+        el.classList.remove('border-accent', 'text-accent-light');
+        el.classList.add('border-transparent', 'text-text-muted');
+    });
+    document.getElementById('tab-' + name).classList.remove('hidden');
+    const btn = document.getElementById('tab-btn-' + name);
+    btn.classList.add('border-accent', 'text-accent-light');
+    btn.classList.remove('border-transparent', 'text-text-muted');
+}
+</script>
