@@ -162,7 +162,7 @@ source .venv/bin/activate
 
 The `.kiro/` folder configures the AI agent's behavior in the Kiro IDE: steering files (always-on rules), hooks (automations), skills, and a custom agent with restricted permissions.
 
-> 📖 Full documentation: [wiki — Kiro Configuration](https://github.com/your-org-1/kiro-personal-hendrikse/wiki/WRA-Kiro-Configuration)
+> 📖 Full documentation: [wiki — Kiro Configuration](#WRA-Kiro-Configuration)
 
 ### One-Click (Kiro Hook) — Fastest Way
 
@@ -224,7 +224,7 @@ From a terminal positioned in the project root (for MS Graph) or from any direct
 
 ## Architecture
 
-> For the complete diagram and architectural decisions, see the [wiki — Architecture](https://github.com/your-org-1/kiro-personal-hendrikse/wiki/WRA-Architecture).
+> For the complete diagram and architectural decisions, see the [wiki — Architecture](#WRA-Architecture).
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -258,7 +258,7 @@ From a terminal positioned in the project root (for MS Graph) or from any direct
 
 ## Project Structure
 
-> For details on each module (role, input/output, dependencies), see the [wiki — Modules](https://github.com/your-org-1/kiro-personal-hendrikse/wiki/WRA-Modules).
+> For details on each module (role, input/output, dependencies), see the [wiki — Modules](#WRA-Modules).
 
 ```
 .
@@ -341,4 +341,4 @@ From a terminal positioned in the project root (for MS Graph) or from any direct
 
 ## License
 
-[MIT](LICENSE) © 2026 your-org-1
+[MIT](LICENSE)
